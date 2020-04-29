@@ -1,0 +1,21 @@
+.w100 {
+  width: 100%;
+}
+
+.h100 {
+  height: 100%;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bgPink {
+  background: pink;
+}
+
+.verticalMiddle {
+  vertical-align: middle;
+}

@@ -1,5 +1,13 @@
 @import '~antd/dist/antd.css';
 
+.w100vw {
+  width: 100vw;
+}
+
+.h100vh {
+  height: 100vh;
+}
+
 .flip-card {
   background-color: transparent;
   width: 100px;

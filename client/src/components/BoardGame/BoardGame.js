@@ -3,6 +3,7 @@ import { Row } from 'antd';
 import CardGame from '../Card/CardGame';
 import { connect } from 'react-redux';
 import * as BoardGameActionCreator from './../../actions/boardGame.action';
+import * as PlayerActionCreator from './../../actions/player.action';
 
 class BoardGame extends Component {
   openCard = (card) => {
@@ -12,6 +13,8 @@ class BoardGame extends Component {
       selectFirstCard,
       selectSecondCard,
       addCardIntoSelected,
+      changeTurn,
+      plusScore,
     } = this.props;
 
     if (idFirstCard === false) selectFirstCard(card.id);
@@ -19,18 +22,21 @@ class BoardGame extends Component {
       selectSecondCard(card.id);
 
       if (card.match === idFirstCard)
-        setTimeout(() => addCardIntoSelected(card.id, idFirstCard), 500);
+        setTimeout(() => {
+          addCardIntoSelected(card.id, idFirstCard);
+          plusScore(1);
+        }, 500);
 
       setTimeout(() => {
         selectFirstCard(false);
         selectSecondCard(false);
+        changeTurn();
       }, 1000);
     }
   };
 
   hiddenCard = (card) => {
     const { selected } = this.props;
-
     let idx = selected.findIndex((id) => id === card.id);
 
     if (idx > -1) return 'flip-card card-hidden';
@@ -76,6 +82,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(BoardGameActionCreator.selectSecondCard(idCard)),
     addCardIntoSelected: (idCard1, idCard2) =>
       dispatch(BoardGameActionCreator.addCardIntoSelected(idCard1, idCard2)),
+    changeTurn: () => dispatch(PlayerActionCreator.changeTurn()),
+    plusScore: (score) => dispatch(PlayerActionCreator.plusScore(score)),
   };
 };
 
