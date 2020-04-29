@@ -1,13 +1,6 @@
 @import '~antd/dist/antd.css';
 
-.w100vw {
-  width: 100vw;
-}
-
-.h100vh {
-  height: 100vh;
-}
-
+/* CardGame */
 .flip-card {
   background-color: transparent;
   width: 100px;
@@ -75,4 +68,27 @@
 
 .card-hidden {
   visibility: hidden;
+}
+
+/* Player */
+.w100 {
+  width: 100%;
+}
+
+.h100 {
+  height: 100%;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bgPink {
+  background: pink;
+}
+
+.verticalMiddle {
+  vertical-align: middle;
 }

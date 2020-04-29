@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Col, Card } from 'antd';
+import './CardGame.css';
 
 class CardGame extends Component {
   render() {

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'antd';
 import { connect } from 'react-redux';
-import './App.css';
-import BoardGame from './../BoardGame/BoardGame';
-import Player from './../Player/Player';
+import BoardGame from './../../components/BoardGame/BoardGame';
+import Player from './../../components/Player/Player';
+import './MemoryGame.css';
 
-class App extends Component {
+class MemoryGame extends Component {
   render() {
     const { player1, player2, turn } = this.props;
 
@@ -36,4 +36,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(MemoryGame);
