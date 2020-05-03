@@ -1,16 +1,22 @@
-import * as types from './../constants/player.actionType';
+import * as types from './../constants/player';
+
+const vyToken = localStorage.getItem('vyToken');
+let info;
+if (vyToken) {
+  info = JSON.parse(atob(vyToken.split('.')[1]));
+}
 
 const initialState = {
   player1: {
-    name: 'Ho Van Vy',
-    username: 'hovanvydut',
-    elo: 1200,
+    name: 'default',
+    username: vyToken ? info.username : '',
+    elo: vyToken ? info.elo : 0,
     score: 0,
     numericalOrder: 1,
   },
   player2: {
-    name: 'Nguyen Thanh Tung',
-    username: 'nguyenthanhtung',
+    name: 'default',
+    username: 'default',
     elo: 1300,
     score: 0,
     numericalOrder: 2,
@@ -20,6 +26,19 @@ const initialState = {
 
 const playerReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'SET_INFO_OF_OTHER_USER': {
+      const { userInfo } = action.payload;
+      return {
+        ...state,
+        player2: {
+          name: 'player2',
+          username: userInfo.username,
+          elo: userInfo.elo,
+          score: 0,
+          numericalOrder: 2,
+        },
+      };
+    }
     case types.CHANGE_TURN: {
       const turn = state.turn === 1 ? 2 : 1;
       return { ...state, turn };
@@ -35,6 +54,30 @@ const playerReducer = (state = initialState, action) => {
         ...state,
         player1: { ...player1 },
         player2: { ...player2 },
+      };
+    }
+
+    case 'SET_TURN': {
+      const { turn } = action.payload;
+
+      return {
+        ...state,
+        turn,
+      };
+    }
+
+    case 'SET_INFO_PLAYER1': {
+      const vyToken = localStorage.getItem('vyToken');
+      const user = JSON.parse(atob(vyToken.split('.')[1]));
+      return {
+        ...state,
+        player1: {
+          name: 'default',
+          username: user.username,
+          elo: user.elo,
+          score: 0,
+          numericalOrder: 1,
+        },
       };
     }
 

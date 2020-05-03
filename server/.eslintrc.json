@@ -20,6 +20,9 @@
     "ecmaVersion": 2018
   },
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "no-console": "off",
+    "max-classes-per-file": "off",
+    "no-underscore-dangle": "off"
   }
 }

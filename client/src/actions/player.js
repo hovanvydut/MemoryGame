@@ -1,4 +1,4 @@
-import * as types from './../constants/player.actionType';
+import * as types from '../constants/player';
 
 export const changeTurn = () => {
   return {

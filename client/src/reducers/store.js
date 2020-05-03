@@ -3,12 +3,18 @@ import createSagaMiddleware from 'redux-saga';
 import card from './card';
 import boardGameReducer from './boardGame';
 import playerReducer from './player';
+import signUpReducer from './signup';
+import signInReducer from './signin';
+import userReducer from './user';
 import rootSaga from './../saga/rootSaga';
 
 const rootReducer = combineReducers({
   card,
   boardGame: boardGameReducer,
   player: playerReducer,
+  signup: signUpReducer,
+  signin: signInReducer,
+  user: userReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();

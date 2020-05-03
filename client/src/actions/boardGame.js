@@ -1,4 +1,4 @@
-import * as types from './../constants/boardGame.actionType';
+import * as types from '../constants/boardGame';
 
 export const selectFirstCard = (idCard) => {
   return {

@@ -1,14 +1,32 @@
 import React from 'react';
-import { Form, Input, Button, Checkbox, Row, Col } from 'antd';
+import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
+import { Form, Input, Button, Checkbox, Row, Col, notification } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import './Login.css';
+import { signInRequest } from './../../actions/signIn';
+import './SignIn.css';
 
-class Login extends React.Component {
+class SignIn extends React.Component {
+  componentDidUpdate() {
+    const { errorReq } = this.props;
+
+    if (errorReq) {
+      notification.error({ message: errorReq.message });
+    }
+  }
+
   onFinish = (values) => {
-    console.log('Received values of form: ', values);
+    const { postSignInRequest } = this.props;
+    postSignInRequest(values.username, values.password);
   };
 
   render() {
+    const { token } = this.props;
+
+    if (token) {
+      return <Redirect to="/" />;
+    }
+
     return (
       <Row style={{ width: '100vw', height: '100vh' }}>
         <Col span={6} offset={9}>
@@ -55,9 +73,9 @@ class Login extends React.Component {
                 <Checkbox>Remember me</Checkbox>
               </Form.Item>
 
-              <a className="login-form-forgot" href="/">
+              <Link className="login-form-forgot" to="/forgot-password">
                 Forgot password
-              </a>
+              </Link>
             </Form.Item>
 
             <Form.Item>
@@ -66,9 +84,9 @@ class Login extends React.Component {
                 htmlType="submit"
                 className="login-form-button"
               >
-                Log in
+                Sign In
               </Button>
-              Or <a href="/">register now!</a>
+              Or <Link to="/signup">Register now!</Link>
             </Form.Item>
           </Form>
         </Col>
@@ -77,4 +95,18 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    errorReq: state.signin.errorReq,
+    token: state.signin.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    postSignInRequest: (username, password) =>
+      dispatch(signInRequest(username, password)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
