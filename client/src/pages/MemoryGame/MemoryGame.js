@@ -17,6 +17,9 @@ class MemoryGame extends Component {
       setInfoOtherUser,
       clearCurrentRoom,
       setTurn,
+      history,
+      clearPlayer,
+      clearBoardGame,
     } = this.props;
     memoryGame = io(MEMORY_GAME_SOCKET_HOST);
 
@@ -27,6 +30,8 @@ class MemoryGame extends Component {
         if (error) {
           alert(error.message);
           clearCurrentRoom();
+          clearBoardGame();
+          clearPlayer();
           this.props.history.push('/');
         }
       }
@@ -39,13 +44,46 @@ class MemoryGame extends Component {
       setInfoOtherUser(userInfo);
     });
     memoryGame.on('set-turn', (turn) => {
-      console.log(turn);
       setTurn(turn);
+    });
+    memoryGame.on('response-leave-room', () => {
+      alert('Player2 has left');
+      clearCurrentRoom();
+      history.push('/');
+    });
+    memoryGame.on('response-win', (userInfo) => {
+      alert(`${userInfo.username} win`);
+      this.leaveRoom();
     });
   }
 
+  leaveRoom = () => {
+    const {
+      currentRoom,
+      clearCurrentRoom,
+      history,
+      clearBoardGame,
+      clearPlayer,
+    } = this.props;
+    memoryGame.emit('leave-memoryGame', currentRoom);
+    clearCurrentRoom();
+    clearBoardGame();
+    clearPlayer();
+    history.push('/');
+  };
+
   componentWillUnmount() {
-    if (memoryGame) memoryGame.emit('disconnect');
+    const { clearCurrentRoom, clearBoardGame, clearPlayer } = this.props;
+
+    clearCurrentRoom();
+    if (memoryGame) {
+      memoryGame.off('get-data-of-cards');
+      memoryGame.off('get-info-other-player');
+      memoryGame.off('set-turn');
+      clearBoardGame();
+      clearPlayer();
+      memoryGame.close();
+    }
   }
 
   render() {
@@ -55,6 +93,7 @@ class MemoryGame extends Component {
       <>
         <Row className="w100vw h100vh">
           <Col span={6}>
+            <button onClick={this.leaveRoom}>Leave</button>
             <Player player={player1} turn={turn} />
           </Col>
           <Col span={12}>
@@ -88,6 +127,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({ type: 'SET_INFO_OF_OTHER_USER', payload: { userInfo } }),
     clearCurrentRoom: () => dispatch({ type: 'CLEAR_CURRENT_ROOM' }),
     setTurn: (turn) => dispatch({ type: 'SET_TURN', payload: { turn } }),
+    clearBoardGame: () => dispatch({ type: 'CLEAR_BOARD_GAME' }),
+    clearPlayer: () => dispatch({ type: 'CLEAR_PLAYER' }),
   };
 };
 

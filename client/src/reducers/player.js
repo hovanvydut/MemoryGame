@@ -26,6 +26,28 @@ const initialState = {
 
 const playerReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'CLEAR_PLAYER': {
+      return Object.assign(
+        {},
+        {
+          player1: {
+            name: 'default',
+            username: vyToken ? info.username : '',
+            elo: vyToken ? info.elo : 0,
+            score: 0,
+            numericalOrder: 1,
+          },
+          player2: {
+            name: 'default',
+            username: 'default',
+            elo: 1300,
+            score: 0,
+            numericalOrder: 2,
+          },
+          turn: 1,
+        }
+      );
+    }
     case 'SET_INFO_OF_OTHER_USER': {
       const { userInfo } = action.payload;
       return {

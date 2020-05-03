@@ -45,9 +45,6 @@ class BoardGame extends Component {
       memoryGame,
       currentRoom,
       turn,
-      player1,
-      player2,
-      selected,
     } = this.props;
 
     if (turn !== 1) return;
@@ -58,7 +55,7 @@ class BoardGame extends Component {
       selectSecondCard(card.id);
       memoryGame.emit('select-second-card', card.id, currentRoom);
 
-      if (card.match === idFirstCard)
+      if (card.match === idFirstCard) {
         setTimeout(() => {
           addCardIntoSelected(card.id, idFirstCard);
           memoryGame.emit(
@@ -70,25 +67,19 @@ class BoardGame extends Component {
           plusScore(1);
           memoryGame.emit('plus-score', 1, currentRoom);
         }, 500);
+      } else {
+        setTimeout(() => {
+          memoryGame.emit('change-turn', currentRoom);
+          changeTurn();
+        }, 1000);
+      }
 
       setTimeout(() => {
         selectFirstCard(false);
         memoryGame.emit('select-first-card', false, currentRoom);
         selectSecondCard(false);
         memoryGame.emit('select-second-card', false, currentRoom);
-        changeTurn();
-        memoryGame.emit('change-turn', currentRoom);
       }, 1000);
-
-      if (selected.length === 36) {
-        if (player1.score === player2.score) {
-          alert('Player1 == Player2');
-        } else if (player1.score > player2.score) {
-          alert('Player1 win');
-        } else {
-          alert('Player2 win');
-        }
-      }
     }
   };
 
@@ -99,10 +90,16 @@ class BoardGame extends Component {
     if (idx > -1) return 'flip-card card-hidden';
     return 'flip-card';
   };
+  handleWin = () => {
+    const { userInfo, currentRoom, memoryGame } = this.props;
+    memoryGame.emit('win', userInfo, currentRoom);
+  };
 
   render() {
-    const { dataOfCard, idFirstCard, idSecondCard } = this.props;
-
+    const { dataOfCard, idFirstCard, idSecondCard, win } = this.props;
+    if (win) {
+      this.handleWin();
+    }
     return (
       <Row gutter={16}>
         {dataOfCard.map((card, idx) => {
@@ -131,7 +128,9 @@ const mapStateToProps = (state) => {
     currentRoom: state.user.currentRoom,
     turn: state.player.turn,
     player1: state.player.player1,
+    userInfo: state.user.info,
     player2: state.player.player2,
+    win: state.boardGame.win,
   };
 };
 

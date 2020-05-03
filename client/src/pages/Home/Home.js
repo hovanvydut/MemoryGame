@@ -36,20 +36,16 @@ class Home extends Component {
     });
   }
 
-  componentWillUnmount() {
-    if (home) home.emit('disconnect');
-    if (memoryGame) memoryGame.emit('disconnect');
-  }
-
   createRoom = () => {
     const { createdRoomName } = this.state;
-    const { userInfo } = this.props;
-
+    const { userInfo, setCurrentRoom, clearCurrentRoom } = this.props;
+    setCurrentRoom(createdRoomName);
     memoryGame.emit(
       'create-room-memorygame',
       { roomName: createdRoomName, userInfo },
       (error) => {
         if (error) {
+          clearCurrentRoom();
           alert(error.message);
         } else {
           this.props.history.push(`/memorygame/${createdRoomName}`);
@@ -58,12 +54,22 @@ class Home extends Component {
     );
   };
 
+  componentWillUnmount() {
+    if (home) {
+      home.off('online-user-count');
+    }
+    if (memoryGame) {
+      memoryGame.off('list-room');
+    }
+    memoryGame.close();
+  }
+
   joinRoom = () => {
     const { joinRoomName } = this.state;
-    const { setCurrentRoom } = this.props;
+    const { setCurrentRoom, history } = this.props;
     setCurrentRoom(joinRoomName);
     setTimeout(() => {
-      this.props.history.push(`/memorygame/${joinRoomName}`);
+      history.push(`/memorygame/${joinRoomName}`);
     }, 200);
   };
 
@@ -113,6 +119,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentRoom: (joinRoomName) =>
       dispatch({ type: 'SET_CURRENT_ROOM', payload: { joinRoomName } }),
+    clearCurrentRoom: () => dispatch({ type: 'CLEAR_CURRENT_ROOM' }),
   };
 };
 
