@@ -5,3 +5,15 @@
 .h100vh {
   height: 100vh;
 }
+.nav-set {
+  display: 'flex';
+  flex-direction: 'row-reverse';
+  align-items: 'center';
+  padding-right: '15px';
+  justify-content: 'space-around';
+  font-size: '15px';
+}
+
+.font20 {
+  font-size: 20px;
+}

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
-import { Row, Col } from 'antd';
+import { Row, Col, Typography, Button } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import BoardGame from './../../components/BoardGame/BoardGame';
 import Player from './../../components/Player/Player';
 import './MemoryGame.css';
-
+const { Text } = Typography;
 const MEMORY_GAME_SOCKET_HOST = 'http://localhost:3001/memorygame';
 let memoryGame;
 class MemoryGame extends Component {
@@ -32,7 +33,7 @@ class MemoryGame extends Component {
           clearCurrentRoom();
           clearBoardGame();
           clearPlayer();
-          this.props.history.push('/');
+          this.props.history.replace('/');
         }
       }
     );
@@ -49,7 +50,7 @@ class MemoryGame extends Component {
     memoryGame.on('response-leave-room', () => {
       alert('Player2 has left');
       clearCurrentRoom();
-      history.push('/');
+      history.replace('/');
     });
     memoryGame.on('response-win', (userInfo) => {
       alert(`${userInfo.username} win`);
@@ -69,12 +70,11 @@ class MemoryGame extends Component {
     clearCurrentRoom();
     clearBoardGame();
     clearPlayer();
-    history.push('/');
+    history.replace('/');
   };
 
   componentWillUnmount() {
     const { clearCurrentRoom, clearBoardGame, clearPlayer } = this.props;
-
     clearCurrentRoom();
     if (memoryGame) {
       memoryGame.off('get-data-of-cards');
@@ -87,19 +87,44 @@ class MemoryGame extends Component {
   }
 
   render() {
-    const { player1, player2, turn } = this.props;
+    const { player1, player2, turn, userInfo } = this.props;
 
     return (
       <>
-        <Row className="w100vw h100vh">
-          <Col span={6}>
-            <button onClick={this.leaveRoom}>Leave</button>
+        <Row style={{ marginBottom: '30px' }} justify="space-between">
+          <Col lg={{ span: 6 }}>
+            <ArrowLeftOutlined onClick={this.leaveRoom} className="font20" />
+          </Col>
+          <Col lg={{ span: 3 }} className="nav-set">
+            <Text strong style={{ paddingRight: '10px' }}>
+              {userInfo ? userInfo.username : ''}
+            </Text>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col
+            lg={{ span: 6, order: 1 }}
+            xs={{ span: 12, order: 1 }}
+            sm={{ span: 12, order: 1 }}
+            md={{ span: 12, order: 1 }}
+          >
             <Player player={player1} turn={turn} />
           </Col>
-          <Col span={12}>
+          <Col
+            lg={{ span: 12, order: 2 }}
+            xs={{ span: 24, order: 3 }}
+            sm={{ span: 24, order: 3 }}
+            md={{ span: 24, order: 3 }}
+          >
             <BoardGame memoryGame={memoryGame} />
           </Col>
-          <Col span={6}>
+          <Col
+            lg={{ span: 6, order: 3 }}
+            xs={{ span: 12, order: 2 }}
+            sm={{ span: 12, order: 2 }}
+            md={{ span: 12, order: 2 }}
+          >
             <Player player={player2} turn={turn} />
           </Col>
         </Row>

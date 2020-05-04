@@ -8,12 +8,10 @@ class Player extends Component {
     return (
       <div className="w100 h100 center">
         <div className="center">
-          <Avatar className="bgPink verticalMiddle" size="large">
-            {player.name.trim().split(' ').slice(-1)[0]}
-          </Avatar>
-          {player.username}
-          {player.score}
-          {turn === player.numericalOrder ? '*' : ''}
+          <span className={turn === player.numericalOrder ? 'myTurn' : ''}>
+            {player.username}
+          </span>
+          <span className="mleft-20">{player.score}</span>
         </div>
       </div>
     );

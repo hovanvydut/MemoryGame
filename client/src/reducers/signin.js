@@ -10,6 +10,13 @@ const initialState = {
 
 const signInReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'CLEAR_TOKEN': {
+      localStorage.removeItem('vyToken');
+      return {
+        token: null,
+        errorReq: null,
+      };
+    }
     case types.SIGN_OUT_REQUEST: {
       localStorage.removeItem(tokenName);
 

@@ -6,7 +6,11 @@ class CardGame extends Component {
   render() {
     const { hiddenCard, openCard, firstCard, secondCard, card } = this.props;
     return (
-      <Col span={4} style={{ display: 'flex', justifyContent: 'center' }}>
+      <Col
+        lg={{ span: 4 }}
+        // xs={{ span: 6 }}
+        style={{ display: 'flex', justifyContent: 'center' }}
+      >
         <div className={hiddenCard(card)} onClick={() => openCard(card)}>
           <Card
             className={

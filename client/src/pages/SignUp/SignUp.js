@@ -30,8 +30,8 @@ class SignUp extends React.Component {
 
   render() {
     return (
-      <Row style={{ width: '100vw', height: '100vh' }}>
-        <Col span={6} offset={9}>
+      <Row style={{ width: '100vw', height: '100vh' }} justify="center">
+        <Col xl={{ span: 6 }} sm={{ span: 12 }}>
           <Form
             name="normal-login"
             className="login-form"

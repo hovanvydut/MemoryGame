@@ -7,3 +7,12 @@
 .site-layout .site-layout-background {
   background: #fff;
 }
+
+.nav-set {
+  display: 'flex';
+  flex-direction: 'row-reverse';
+  align-items: 'center';
+  padding-right: '15px';
+  justify-content: 'space-around';
+  font-size: '15px';
+}

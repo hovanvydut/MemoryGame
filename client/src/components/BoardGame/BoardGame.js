@@ -101,7 +101,7 @@ class BoardGame extends Component {
       this.handleWin();
     }
     return (
-      <Row gutter={16}>
+      <Row gutter={[8, 8]} justify="center">
         {dataOfCard.map((card, idx) => {
           return (
             <CardGame
