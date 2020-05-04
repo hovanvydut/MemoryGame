@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import io from 'socket.io-client';
 import { Row, Input, Col, Typography, List, Card } from 'antd';
 import { LogoutOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import * as config from './../../constants/config';
 
 const { Search } = Input;
 const { Text } = Typography;
-const HOME_SOCKET_HOST = 'http://localhost:3001';
-const MEMORY_GAME_SOCKET_HOST = 'http://localhost:3001/memorygame';
+const HOME_SOCKET_HOST = config.HOST;
+const MEMORY_GAME_SOCKET_HOST = `${config.HOST}/memorygame`;
 let home;
 let memoryGame;
 
@@ -68,17 +68,12 @@ class Home extends Component {
   };
 
   render() {
-    const {
-      onlineUserCount,
-      joinRoomName,
-      createdRoomName,
-      listRoom,
-    } = this.state;
+    const { onlineUserCount, listRoom } = this.state;
     const { userInfo } = this.props;
     return (
       <>
         <Row style={{ marginBottom: '30px' }} justify="space-between">
-          <Col lg={{ span: 6 }}></Col>
+          <Col lg={{ span: 6 }}>Online: {onlineUserCount}</Col>
           <Col lg={{ span: 3 }} className="nav-set">
             <a
               href="/"

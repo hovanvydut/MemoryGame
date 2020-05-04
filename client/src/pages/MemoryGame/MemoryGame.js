@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
-import { Row, Col, Typography, Button } from 'antd';
+import { Row, Col, Typography } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import BoardGame from './../../components/BoardGame/BoardGame';
 import Player from './../../components/Player/Player';
+import * as config from './../../constants/config';
 import './MemoryGame.css';
 const { Text } = Typography;
-const MEMORY_GAME_SOCKET_HOST = 'http://localhost:3001/memorygame';
+const MEMORY_GAME_SOCKET_HOST = `${config.HOST}/memorygame`;
 let memoryGame;
 class MemoryGame extends Component {
   UNSAFE_componentWillMount() {

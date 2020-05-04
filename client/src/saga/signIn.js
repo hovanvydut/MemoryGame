@@ -2,8 +2,9 @@ import * as signInTypes from './../constants/signin';
 import { signInSuccess, signInFail } from './../actions/signIn';
 import { takeLatest, put } from 'redux-saga/effects';
 import axios from 'axios';
+import * as config from './../constants/config';
 
-const HOST = 'http://localhost:3001';
+const HOST = `${config.HOST}`;
 
 function* loginFlow(action) {
   const { username, password } = action.payload;

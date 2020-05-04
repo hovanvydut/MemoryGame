@@ -2,10 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const cors = require('cors');
 const mongoose = require('mongoose');
 const logger = require('morgan');
+const cors = require('cors');
 
+// connect DB
 mongoose.connect(
   `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_USER_PASSWORD}@cluster0-zld6m.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
   { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
@@ -21,23 +22,22 @@ const server = http.Server(app);
 const io = socketIo(server);
 const PORT = process.env.PORT || 3000;
 
-// const UserModel = require('./models/database/users.model');
-
+app.use(cors());
 app.use('/static', express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 app.use(logger('dev'));
 
-app.get('/', (req, res) => {
-  return res.send('Home page');
-});
+// Router
 app.use('/api/v1', require('./app/router/api/v1/index'));
+
+app.get('/', (req, res) => {
+  return res.send('https://github.com/hovanvydut/MemoryGame');
+});
 
 server.listen(PORT, () => console.log(`App has started on port ${PORT}`));
 
-const UserModel = require('./models/database/users.model');
-// NOTE fix cung data of cards, sau se luu db, random
+// Handle realtime
 let dataOfCard = [
   {
     id: 1,
@@ -221,23 +221,23 @@ let dataOfCard = [
   },
 ];
 
-/* FIXME logic of socket.io */
-
 io.on('connection', (socket) => {
-  // console.log(io.sockets.);
-  // online user
-  io.sockets.emit('online-user-count', 1);
-
+  io.sockets.emit('online-user-count', io.eio.clientsCount);
+  console.log(io);
   socket.on('disconnect', () => {
-    io.sockets.emit('online-user-count', 1);
+    io.sockets.emit('online-user-count', io.eio.clientsCount);
   });
 });
 
-// FIXME verify token each request data of cards or room, players
+function getListRoom(memoryGameNsp) {
+  return Object.keys(memoryGameNsp.adapter.rooms).filter((elm) =>
+    elm.match(/^[^\\/memorygame#].*/)
+  );
+}
+
 const memoryGameNsp = io.of('/memorygame');
 memoryGameNsp.on('connection', (socket) => {
-  memoryGameNsp.emit('list-room', Object.keys(memoryGameNsp.adapter.rooms));
-
+  memoryGameNsp.emit('list-room', getListRoom(memoryGameNsp));
   socket.on('create-room-memorygame', async ({ roomName, userInfo }, cb) => {
     const existRoom = memoryGameNsp.adapter.rooms[roomName];
     if (existRoom) {
@@ -245,34 +245,30 @@ memoryGameNsp.on('connection', (socket) => {
     }
     socket.join(roomName);
     memoryGameNsp.adapter.rooms[roomName].player1 = userInfo;
-    memoryGameNsp.emit('list-room', Object.keys(memoryGameNsp.adapter.rooms));
+    memoryGameNsp.emit('list-room', getListRoom(memoryGameNsp));
     return cb(null);
   });
 
   // join room
   socket.on('join-room-memorygame', async ({ currentRoom, userInfo }, cb) => {
     const existRoom = memoryGameNsp.adapter.rooms[currentRoom];
-
     if (!existRoom) {
       socket.join(currentRoom);
       memoryGameNsp.adapter.rooms[currentRoom].player1 = userInfo;
-      return memoryGameNsp.emit(
-        'list-room',
-        Object.keys(memoryGameNsp.adapter.rooms)
-      );
+      // console.log(memoryGameNsp);
+
+      return memoryGameNsp.emit('list-room', getListRoom(memoryGameNsp));
     }
     if (memoryGameNsp.adapter.rooms[currentRoom].length === 1) {
       socket.join(currentRoom);
       socket.emit('set-turn', 2);
-
       socket.broadcast
         .to(currentRoom)
         .emit('get-info-other-player', { userInfo });
-
       socket.emit('get-info-other-player', {
         userInfo: memoryGameNsp.adapter.rooms[currentRoom].player1,
       });
-      dataOfCard.forEach(function (card) {
+      dataOfCard.forEach((card) => {
         card.order = Math.random();
       });
       dataOfCard = dataOfCard.sort((a, b) => a.order - b.order);
@@ -288,34 +284,27 @@ memoryGameNsp.on('connection', (socket) => {
       .to(currentRoom)
       .emit('response-select-first-card-to-other-user', cardId);
   });
-
   socket.on('select-second-card', (cardId, currentRoom) => {
     socket.broadcast
       .to(currentRoom)
       .emit('response-select-second-card-to-other-user', cardId);
   });
-
   socket.on('add-card-into-selected', (cardId1, cardId2, currentRoom) => {
     socket.broadcast
       .to(currentRoom)
       .emit('response-add-card-into-selected', cardId1, cardId2);
   });
-
   socket.on('plus-score', (point, currentRoom) => {
     socket.broadcast.to(currentRoom).emit('response-plus-score', point);
   });
-
   socket.on('change-turn', (currentRoom) => {
     socket.broadcast.to(currentRoom).emit('response-change-turn');
   });
-
-  memoryGameNsp.emit('list-room', Object.keys(memoryGameNsp.adapter.rooms));
-
+  memoryGameNsp.emit('list-room', getListRoom(memoryGameNsp));
   socket.on('leave-memoryGame', (currentRoom) => {
     socket.leave(currentRoom);
     socket.to(currentRoom).emit('response-leave-room');
   });
-
   socket.on('win', async (userInfo, currentRoom) => {
     memoryGameNsp.to(currentRoom).emit('response-win', userInfo);
   });
