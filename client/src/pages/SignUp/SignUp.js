@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Form, Input, Button, Row, Col, notification } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -7,7 +7,12 @@ import { signUpRequest } from './../../actions/signUp';
 import './SignUp.css';
 
 class SignUp extends React.Component {
-  formRef = React.createRef();
+  constructor(props) {
+    super(props);
+    this.state = {
+      redirect: null,
+    };
+  }
 
   onFinish = (values) => {
     const { signUpRequestDispatch } = this.props;
@@ -18,9 +23,13 @@ class SignUp extends React.Component {
     const { successReq, errorReq } = this.props;
 
     if (successReq) {
-      this.formRef.current.resetFields();
-      notification.success({ message: successReq.message });
-      // return setTimeout(() => <Redirect to="/signin" />, 5000);
+      setTimeout(() => {
+        notification.success({ message: successReq.message });
+      }, 2000);
+      return this.setState({ redirect: { to: '/signin' } });
+      // return setTimeout(() => {
+      //   this.setState({ redirect: { to: '/signin' } });
+      // }, 2000);
     }
 
     if (errorReq) {
@@ -29,13 +38,18 @@ class SignUp extends React.Component {
   }
 
   render() {
+    const { redirect } = this.state;
+
+    if (redirect && redirect.to) {
+      return <Redirect to={redirect.to}></Redirect>;
+    }
+
     return (
       <Row style={{ width: '100vw', height: '100vh' }} justify="center">
         <Col xl={{ span: 6 }} sm={{ span: 12 }}>
           <Form
             name="normal-login"
             className="login-form"
-            ref={this.formRef}
             initialValues={{
               remember: true,
             }}

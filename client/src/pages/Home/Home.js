@@ -84,7 +84,7 @@ class Home extends Component {
             >
               <LogoutOutlined style={{ fontSize: '15px' }} />
             </a>
-            <Text strong style={{ paddingRight: '10px' }}>
+            <Text strong style={{ paddingLeft: '10px' }}>
               {userInfo ? userInfo.username : ''}
             </Text>
           </Col>

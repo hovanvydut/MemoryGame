@@ -223,7 +223,6 @@ let dataOfCard = [
 
 io.on('connection', (socket) => {
   io.sockets.emit('online-user-count', io.eio.clientsCount);
-  console.log(io);
   socket.on('disconnect', () => {
     io.sockets.emit('online-user-count', io.eio.clientsCount);
   });
@@ -231,7 +230,7 @@ io.on('connection', (socket) => {
 
 function getListRoom(memoryGameNsp) {
   return Object.keys(memoryGameNsp.adapter.rooms).filter((elm) =>
-    elm.match(/^[^\\/memorygame#].*/)
+    elm.indexOf('/memorygame#')
   );
 }
 
@@ -255,8 +254,6 @@ memoryGameNsp.on('connection', (socket) => {
     if (!existRoom) {
       socket.join(currentRoom);
       memoryGameNsp.adapter.rooms[currentRoom].player1 = userInfo;
-      // console.log(memoryGameNsp);
-
       return memoryGameNsp.emit('list-room', getListRoom(memoryGameNsp));
     }
     if (memoryGameNsp.adapter.rooms[currentRoom].length === 1) {
