@@ -33,7 +33,7 @@ const boardGameReducer = (state = initialState, action) => {
     }
     case types.ADD_CARD_INTO_SELECTED: {
       const { idCard1, idCard2 } = action.payload;
-      if (state.selected.length === 18) {
+      if (state.selected.length === 34) {
         return {
           ...state,
           selected: [...state.selected, idCard1, idCard2],
